@@ -1,0 +1,57 @@
+:root {
+  --primary-neon: #00f2ff;
+  --secondary-neon: #7000ff;
+  --success-neon: #39ff14;
+  --danger-neon: #ff0055;
+  --bg-dark: #0a0b10;
+  --card-bg: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --text-main: #e0e0e0;
+
+  font-family: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: radial-gradient(circle at 50% 50%, #1a1a2e 0%, #0a0b10 100%);
+  background-attachment: fixed;
+  color: var(--text-main);
+  min-height: 100vh;
+}
+
+/* Sharp, solid headers - Glow removed */
+h1, h2, h3 {
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--primary-neon);
+  margin-bottom: 0.5rem;
+}
+
+a {
+  text-decoration: none;
+  color: var(--primary-neon);
+  transition: 0.2s ease;
+}
+
+a:hover {
+  color: white; /* Sharp color swap, no glow */
+}
+
+/* Scrollbar UI (Non-text element) */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0a0b10;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--secondary-neon);
+  border-radius: 10px;
+}
