@@ -18,6 +18,19 @@ class BookListScreen extends StatelessWidget {
     return (res.data as List).map((json) => Book.fromJson(json)).toList();
   }
 
+  void _handleAddToCart(BuildContext context, int productId) async {
+    try {
+      await Provider.of<CartProvider>(context, listen: false).addToCart(productId);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Added to cart!"), duration: Duration(seconds: 1)),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Error adding to cart")),
+      );
+    }
+  }
+
   // Inside BookListScreen class
   void _handleDelete(BuildContext context, Book book) async {
     // 1. Show confirmation dialog
@@ -71,8 +84,7 @@ class BookListScreen extends StatelessWidget {
       body: FutureBuilder<List<Book>>(
         future: fetchBooks(),
         builder: (context, snapshot) {
-          if (!snapshot.hasData)
-            return const Center(child: CircularProgressIndicator());
+          if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
 
           return ListView.builder(
             itemCount: snapshot.data!.length,
@@ -84,45 +96,34 @@ class BookListScreen extends StatelessWidget {
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    if (isAdmin) IconButton(
-                      icon: const Icon(Icons.edit, color: Colors.orange),
-                      onPressed: () async {
-                        bool? refresh = await Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => BookFormScreen(book: book)),
-                        );
-                        if (refresh == true) Navigator.pushReplacementNamed(context, '/home');
-                      },
+                    IconButton(
+                      icon: const Icon(Icons.add_shopping_cart, color: Colors.green),
+                      onPressed: () => _handleAddToCart(context, book.id),
                     ),
-                    if (isAdmin) IconButton(
-                      icon: const Icon(Icons.delete, color: Colors.red),
-                      onPressed: () => _handleDelete(context, book),
-                    ),
+                    if (isAdmin) ...[
+                      IconButton(
+                        icon: const Icon(Icons.edit, color: Colors.orange),
+                        onPressed: () async {
+                          bool? refresh = await Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => BookFormScreen(book: book)),
+                          );
+                          if (refresh == true) Navigator.pushReplacementNamed(context, '/home');
+                        },
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.delete, color: Colors.red),
+                        onPressed: () => _handleDelete(context, book),
+                      ),
+                    ],
                   ],
                 ),
-                onTap: () async {
-                  try {
-                    await Provider.of<CartProvider>(
-                      context,
-                      listen: false,
-                    ).addToCart(book.id);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text("Added to cart!"),
-                        duration: Duration(seconds: 1),
-                      ),
-                    );
-                  } catch (e) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Error adding to cart")),
-                    );
-                  }
-                },
               );
             },
           );
         },
       ),
+      // ..
       floatingActionButton: isAdmin ? FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: () async {
